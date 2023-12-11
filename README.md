@@ -30,8 +30,8 @@ Two scenarios have been considered in this work.
 - "data_driven_safety_guard.m": checks the safety of the plant using the received control 
 - "one_step_ctrl.m" computes the data-driven ST-MPC control commands. 
 - "poly_approx.m": computes a zonotopic inner approximation of a polyhedron 
-- "set_index.m": computes the set memebership index of an state for the data-driven ROSC sets.
-- 
+- "set_index.m": computes the set membership index of a state for the data-driven ROSC sets.
+- "detector_data_driven.m": simulates the data-driven anomaly detector local to the tracking controller, which is in charge of detecting anomalies caused by FDI attacks
 
 
 ## Animated test 

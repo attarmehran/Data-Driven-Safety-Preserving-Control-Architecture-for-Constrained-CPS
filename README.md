@@ -24,10 +24,19 @@ Two scenarios have been considered in this work.
 #### Function Descriptions
 - "compute_AB.m": computes all possible system matrices that are consistent with the data
 - "computeRPI.m": computes a model-based RCI set based on the proposed method in **"Invariant approximations of the minimal robust positively invariant set", by Rakovic et al.
-- "model_based_stmpc.m": computes the model-based ST-MPC control commands
+- "computing_ROSC_sets.m": computes the family of ROSC sets by considering a target set $\hat{\mathcal{T}}^0$
 - "compute_intersec.m": computes the intersection of polyhedrons
 - "compute_presets_approx.m": computes the data-driven ROSC sets in the extended space of $(x,u)$.
 - "indx_finder.m": computes the set memebership index of an state for the model-based ROSC sets. 
 - "one_step_ctrl.m" computes the data-driven ST-MPC control commands. 
 - "poly_approx.m": computes a zonotopic inner approximation of a polyhedron 
-- "set_index.m": computes the set memebership index of an state for the data-driven ROSC sets. 
+- "set_index.m": computes the set memebership index of an state for the data-driven ROSC sets.
+- 
+
+
+## Animated test 
+### Scenario 1: Attack on the actuation channel 
+1- please run "data_driven_architecture_attack_on_actuation.m"  
+
+### Scenario 2: Attack on the measurement channel 
+2- please run "data_driven_architecture_attack_on_measurement.m" 

@@ -1,7 +1,7 @@
 # Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS
 
 ## Description 
-This repository contains the codes for "A Data-Driven Safety Preserving Control Architecture for Constrained Cyber-Physical Systems" by [Mehran Attar](https://scholar.google.com/citations?user=nnLTy-oAAAAJ&hl=en) and [Walter Lucia](https://users.encs.concordia.ca/~wlucia/index.html) has been submitted to publish in IEEE Control Systems Letters (L-CSS) --> [Arxiv link](https://arxiv.org/abs/2312.00658)
+This repository contains the codes for "A Data-Driven Safety Preserving Control Architecture for Constrained Cyber-Physical Systems" by [Mehran Attar](https://scholar.google.com/citations?user=nnLTy-oAAAAJ&hl=en) and [Walter Lucia](https://users.encs.concordia.ca/~wlucia/index.html) which has been submitted to publish in IEEE Control Systems Letters (L-CSS) --> [Arxiv link](https://arxiv.org/abs/2312.00658)
 
 
 ## Abstracat 

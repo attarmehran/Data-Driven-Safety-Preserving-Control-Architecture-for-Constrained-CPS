@@ -36,7 +36,7 @@ Two scenarios have been considered in this work.
 
 ## Animated test 
 ### Scenario 1: Attack on the actuation channel 
-1- please run "data_driven_architecture_attack_on_actuation.m"  
+1- please run "animated_test_S1.m"  
 
 ### Scenario 2: Attack on the measurement channel 
-2- please run "data_driven_architecture_attack_on_measurement.m" 
+2- please run "animated_test_S2.m" 

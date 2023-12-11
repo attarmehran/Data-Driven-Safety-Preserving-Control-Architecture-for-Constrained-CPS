@@ -1,9 +1,14 @@
+% Author:       Mehran Attar
+% Written:      10-December-2023
+% Last update:  --------------
+% Last revision: 10-December-2023
+% This function simulates the data-driven anomaly detector local to the tracking controller, 
+% which is in charge of detecting anomalies caused by FDI attacks
+% signal 
+%------------- BEGIN CODE --------------
+
 function alarm = detector_data_driven(x,x_pre)
 
-% x = zonotope(x,0*diag(ones(2,1)));
-% u = zonotope(u,0*diag(ones(3,1)));
-
-% x_1 = AB * (cartProd(x,u))+ 1*W;
 if x_pre.contains(x) == 1
     alarm = 0;
 else

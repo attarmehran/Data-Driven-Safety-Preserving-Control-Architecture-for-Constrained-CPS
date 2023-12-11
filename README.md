@@ -14,9 +14,12 @@ In this work, we propose a data-driven networked control architecture for unknow
 3- Add the repo folder and subfolders to the Matlab path.
 
 ## Files Description
-1- To compute ROSC sets based on all consistent system matrices $\hat{A}_i, \hat{B}_i$, run "compute_ROSC_sets.m"  
+Two scenarios have been considered in this work. 
+### Scenario 1: Attack on the actuation channel 
+1- To simulate this scenario, please run "data_driven_architecture_attack_on_actuation.m"  
 
-2- To compute ST-MPC control commands and obtain set index membership, run "compute_ST_MPC.m". 
+### Scenario 2: Attack on the measurement channel 
+2- To simulate this scenario, please run "data_driven_architecture_attack_on_measurement.m" 
 
 #### Function Descriptions
 - "compute_AB.m": computes all possible system matrices that are consistent with the data

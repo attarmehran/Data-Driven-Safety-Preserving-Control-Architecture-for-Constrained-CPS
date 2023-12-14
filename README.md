@@ -44,6 +44,7 @@ Two scenarios have been considered in this work.
 
 # Figures 
 ### Attack on the actuation channel: 
-![Alt Text](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_state_trajectory.jpg)
+![State Evolution](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_state_trajectory.jpg)
+![Alarm, emergency and Safety Signals](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_alarm_safety.jpg)
 
-
+!

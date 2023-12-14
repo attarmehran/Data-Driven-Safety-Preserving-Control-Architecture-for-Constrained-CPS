@@ -41,3 +41,13 @@ Two scenarios have been considered in this work.
 
 ### Scenario 2: Attack on the measurement channel 
 2- please run "animated_test_S2.m" 
+
+# Figures 
+### Attack on the actuation channel: 
+![State Evolution](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_state_trajectory.jpg)
+![Alarm, emergency and Safety Signals](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_alarm_safety.jpg)
+
+### Attack on the measurement channel: 
+![](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_B_state_trajectory.jpg)
+![](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_B_alarm_safety.jpg)
+###

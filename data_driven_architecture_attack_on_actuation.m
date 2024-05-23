@@ -1,9 +1,9 @@
 
 % Author:       Mehran Attar
-% Written:      10-December-2023
-% Last update:  --------------
-% Last revision: 10-December-2023
-% This codes simulates the proposed data-driven safety preserving control
+% Written:      12-Jan-2024
+% Last update:  23-May-2024
+% Last revision: 23-May-2024
+% This codes simulates a data-driven safety preserving control
 % architecture in the presence of cyber attacks on the actuation channel. 
 
 %------------- BEGIN CODE --------------
@@ -31,14 +31,15 @@ AB = load('AB.mat').AB;   % set of system matrices \mathcal{M}_{AB} as a matrix 
 Td_aug = load('Td_aug.mat').Td_aug;  % set of augmented ROSC sets
 
 % simulation settings
-sim_time = 200;    % simulation time
+sim_time = 201;    % simulation time
 
 % defining system matrices
-A=[0.993 0.003;0.007 0.982];
-B=[0.008 -0.003 -0.003;0 0.003 0.003];
-C=eye(2);
-D=0;
+A = [0.993 0.003;0.007 0.982];
+B = [0.008 -0.003 -0.003;0 0.003 0.003];
+C = eye(2);
+D = 0;
 
+% computing the dimesions of the system's matrices 
 dim_x = size(A,1);
 dim_u = size(B,2);
 
@@ -47,7 +48,7 @@ X = zonotope(interval([-0.48;-0.48],[0.3;0.3]));  % constraints on states
 U = zonotope(interval([-0.7778;-1.25;-1.4765],[0.611;0.75;0.5235])); % constraints on inputs
 W = zonotope(zeros(dim_x,1),0.001*eye(dim_x));  % noise zonotope
 
-sys = ss(A,B,C,D);  % defining system
+sys = ss(A,B,C,D);  % defining system in the state space
 
 % computing system matrices using set of vertices and data samples
 for i=1:size(V_AB,1)
@@ -59,15 +60,17 @@ end
 for i=1:sim_time
     if i<100
         ref(:,i)=[0.1;0.03];
-    elseif i>=100 && i<=200
+    elseif i>=100 && i<=sim_time
         ref(:,i)=[0.1;-0.1];
     end
 end
 
 % defining attack on the actuation channel
 for i=1:sim_time
-    if i>=95 && i<=113
-        u_a(:,i)=[1;1;2];
+    if i>=40 && i<=60
+        u_a(:,i)=-[1;2;2];
+    elseif i>=145 && i<155
+        u_a(:,i)=[2;-2;1];
     else
         u_a(:,i)=[0;0;0];
     end
@@ -88,49 +91,49 @@ for i=1:sim_time
     u_eq(:,i) = pinv(B)*((eye(dim_x)-A)*ref(:,i));
 end
 
-% Visualization
+% Visualization of the state space 
 close all
 f = figure;
 ax = axes;
-f.Position = [700 70 800 700]
+f.Position = [700 70 800 700];
 
-plot(x_data(1,1),x_data(2,1),'*','MarkerSize',4,'MarkerEdgeColor','k')
+plot(x_data(1,1),x_data(2,1),'*','MarkerSize',4,'MarkerEdgeColor','k');
 hold on
-annotation('textarrow',[0.84525 0.819015325670498],...
-    [0.845428571428572 0.78886229086229],'String','$\hat{\mathcal{T}}^{40}_e$',...
-    'Interpreter','latex',...
-    'FontSize',14);
+text(0.1,0.07,'$\hat{\mathcal{T}}^{40}_e$','FontSize',17,'interpreter','latex');
 hold on
 plot(Td{1}.mptPolytope.P,'Alpha',0.7,...
-    'color','green','LineWidth',0.01)
+    'color','green','LineWidth',0.01);
 hold on
 for i=2:40
-    plot(Td{i},[1 2],'color',[0.5020    0.5020    0.5020],'LineStyle','-','LineWidth',1)
+    plot(Td{i},[1 2],'color',[0.5020    0.5020    0.5020],'LineStyle','-','LineWidth',1); % family of ROSC sets
     hold on
 end
-xlim([-0.1 0.12])
-ylim([-0.15 0.12])
-xlabel('$\tilde{x}_1$','interpreter','latex','FontSize',24)
-ylabel('$\tilde{x}_2$','interpreter','latex','FontSize',24)
+xlim([-0.1 0.16]);
+ylim([-0.15 0.12]);
+xlabel('$\tilde{x}_1$','interpreter','latex','FontSize',24);
+ylabel('$\tilde{x}_2$','interpreter','latex','FontSize',24);
 hold on
-text(-0.08,0.025,'$\hat\mathcal{T}^0_e$','FontSize',17,'interpreter','latex')
+text(-0.08,0.025,'$\hat\mathcal{T}^0_e$','FontSize',17,'interpreter','latex');
 hold on
-text(0.103,-0.1,'$r_{100}$','FontSize',17,'interpreter','latex')
+text(0.103,-0.1,'$r_{100}$','FontSize',17,'interpreter','latex');
 hold on
-text(0.103,0.03,'$r_1$','FontSize',17,'interpreter','latex')
+text(0.103,0.03,'$r_1$','FontSize',17,'interpreter','latex');
 hold on
-text(0.01,0,'$x_0$','FontSize',17,'interpreter','latex')
+text(0.01,0,'$x_0$','FontSize',17,'interpreter','latex');
 hold on
 handle_ref1 = plot(ref(1,1),ref(2,1),'pentagram','MarkerSize',9,'MarkerEdgeColor','k',...
-    'MarkerFaceColor','b','LineWidth',0.8)
+    'MarkerFaceColor','b','LineWidth',0.8);
 hold on
 handle_ref2 = plot(ref(1,120),ref(2,120),'pentagram','MarkerSize',9,'MarkerEdgeColor','k',...
-    'MarkerFaceColor','b','LineWidth',1)
+    'MarkerFaceColor','b','LineWidth',1);
 hold on
 box on
 grid off
 
-% simulation of the system -- presence of attack on the actuation channel
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% simulation of the system -- presence of attack on the actuation channel %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 for k=1:sim_time
     
     % computing data-driven tracking controller
@@ -144,15 +147,18 @@ for k=1:sim_time
     
     % defining attack on the actuation channel - intelligent attacker
     ctr_data_prime(:,k) = ctr_data(:,k) + u_a(:,k);
-    ctr_data_prime(:,k) =  min(max(ctr_data_prime(:,k),...
+    
+    if (k>=40 && k<=60) | (k>=145&k<155)
+        ctr_data_prime(:,k) =  min(max(ctr_data_prime(:,k),...
         [-0.7778;-1.25;-1.4765]), [0.611;0.75;0.5235]);
+    end
     
     % attacker changes the flag signal
     if alarm_data(k)==1 && emergency(k-1) == 0
         flag = 0;
     end
     
-    %
+    % ignore the flag when the trajectory reach the terminal region 
     if flag == 1 && Td{1}.contains(x_data(:,k)) == 1
         flag = 0;
         ignore = 1;
@@ -161,7 +167,7 @@ for k=1:sim_time
     end
     %
     
-    % safety check
+    % safety verification 
     [x_plus_data{k},safety_data(k)] = data_driven_safety_guard(ctr_data_prime(:,k),...
         x_data(:,k),U,Td{40},AB,W);
     
@@ -174,6 +180,8 @@ for k=1:sim_time
     if flag == 1
         index_data(k) = set_index(x_data(:,k),Td);
         u_ver(:,k) = one_step_ctrl(3, x_data(:,k), Td_aug, index_data(k));
+        u_ver(:,k) = min(max(u_ver(:,k),...
+        [-0.7778;-1.25;-1.4765]), [0.611;0.75;0.5235]);
         emergency(k) = 1;
     else
         u_ver(:,k) = ctr_data_prime(:,k);
@@ -210,11 +218,36 @@ for k=1:sim_time
     k
 end
 
-alarm = alarm_data(2:201);
-active = emergency(2:200);
-safety = safety_data(2:200);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% simulation of the system without the safety modules -- presence of attack on the actuation channel %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+hold on 
+x_w(:,1) = [0.01;-0.01];  % initial state 
+
+for k=1:sim_time
+    u_w(:,k) = K_data*(x_w(:,k)-ref(:,k)) + u_eq(:,k);  % tracking controller 
+    u_w(:,k) =  min(max(u_w(:,k), [-0.7778;-1.25;-1.4765]), [0.611;0.75;0.5235]); % saturation module
+    u_w_prime(:,k) = u_w(:,k) + u_a(:,k); % attack on the actuation channel 
+    
+    % system evolution 
+    x_w(:,k+1) = A*x_w(:,k) + B*u_w_prime(:,k) + randPoint(W);
+    
+    if Td{40}.contains(x_w(:,k)) == 1
+        safety_vio(k) = 0;
+    else
+        safety_vio(k) = 1;
+    end
+    
+    % visualization of the system evolution without safety modules 
+    plot(x_w(1,k+1),x_w(2,k+1),'o','MarkerSize',2,'MarkerEdgeColor','b','MarkerFaceColor','b');
+    pause(0.1)
+    hold on 
+    k
+end
 %% Visualization of the system evolution 
+% close all
+
 f = figure;
 ax = axes;
 f.OuterPosition = [200 50 850 800]
@@ -227,43 +260,51 @@ for i=2:40
     plot(Td{i},[1 2],'color',[0.5020    0.5020    0.5020],'LineStyle','-','LineWidth',0.1)
     hold on
 end
-
+hold on 
+annotation('textarrow',[0.885057471264368 0.935823754789272],...
+    [0.135135135135135 0.337837837837838],'String','Attack Detection Point');
 hold on
-x1 = [0.877394636015326 0.896551724137931];
-y1 = [0.420045045045045 0.676801801801802];
-x2 = [0.699233716475094 0.89272030651341];
-y2 = [0.81644144144144 0.757882882882883];
-
-annotation('textarrow',x1,y1,'String','Attack Starting Point','FontSize',12)
+annotation('textarrow',[0.516283524904214 0.619731800766283],...
+    [0.406531531531531 0.288288288288288],'String','Attack Termination Point');
 hold on
-annotation('textarrow',x2,y2,'String','Attack Detection Point','FontSize',12)
+text(0.15,-0.055,'${x}_{52}$','FontSize',17,'interpreter','latex')
 hold on
-text(-0.08,0.025,'$\hat\mathcal{T}^0_e$','FontSize',17,'interpreter','latex')
+text(0.075,-0.07,'${x}_{154}$','FontSize',17,'interpreter','latex')
+hold on
+text(-0.04,0.03,'$\hat\mathcal{T}^0_e$','FontSize',17,'interpreter','latex')
 hold on
 text(0.103,-0.1,'$r_{100}$','FontSize',17,'interpreter','latex')
 hold on
 text(0.103,0.03,'$r_1$','FontSize',17,'interpreter','latex')
 hold on
-text(0.098,0.055,'$x_{104}$','FontSize',17,'interpreter','latex')
-hold on
 text(0.01,0,'$x_0$','FontSize',17,'interpreter','latex')
 hold on
-annotation('textarrow',[0.921455938697315 0.886015325670498],...
-    [0.879630630630629 0.826576576576576],'String','$\hat{\mathcal{T}}^{40}_e$',...
+annotation('textarrow',[0.953065134099614 0.931992337164748],...
+    [0.530405405405402 0.471846846846843],'String','$\hat{\mathcal{T}}^{40}_e$',...
     'Interpreter','latex',...
     'FontSize',14);
 hold on
-handle_tracking = plot(x_data(1,1:50),x_data(2,1:50),'b-','LineWidth',1.5)
+handle_tracking = plot(x_data(1,1:40),x_data(2,1:40),'b-','LineWidth',1.5)
 hold on
-handle_attack_tracking = plot(x_data(1,95:105),x_data(2,95:105),'r-','LineWidth',1.5)
+handle_attack_tracking = plot(x_data(1,40:52),x_data(2,40:52),'r-','LineWidth',1.5)
 hold on
-handle_em_control = plot(x_data(1,105:115),x_data(2,105:115),'color'...
-    ,[0.1294    0.6588    0.0588],'LineWidth',...
-    2,'LineStyle','-')
+handle_em_control = plot(x_data(1,52:62),x_data(2,52:62),'color'...
+    ,[0.1294    0.6588    0.0588],'LineWidth',2.5,'LineStyle','-')
 hold on
-handle_tracking_after = plot(x_data(1,115:180),x_data(2,115:180),'m-','LineWidth',1.5)
+handle_tracking_after = plot(x_data(1,62:80),x_data(2,62:80),'m--','LineWidth',1)
 hold on
-
+handle_tracking = plot(x_data(1,100:125),x_data(2,100:125),'b-','LineWidth',1.5)
+hold on 
+handle_em_control = plot(x_data(1,145:151),x_data(2,145:151),'color'...
+    ,[0.1294    0.6588    0.0588],'LineWidth',2.5,'LineStyle','-')
+hold on 
+handle_attack_tracking = plot(x_data(1,151:154),x_data(2,151:154),'r-','LineWidth',1.5)
+hold on 
+plot(x_data(1,154),x_data(2,154),'O','MarkerSize',5,'MarkerEdgeColor','k',...
+    'MarkerFaceColor','r','LineWidth',0.8)
+hold on 
+handle_tracking_after = plot(x_data(1,154:160),x_data(2,154:160),'m--','LineWidth',1)
+hold on 
 handle_initial_state = plot(x_data(1,1),x_data(2,1),'O','MarkerSize',5,'MarkerEdgeColor','k',...
     'MarkerFaceColor','b','LineWidth',0.8)
 hold on
@@ -273,12 +314,12 @@ hold on
 handle_ref2 = plot(ref(1,120),ref(2,120),'pentagram','MarkerSize',9,'MarkerEdgeColor','k',...
     'MarkerFaceColor','b','LineWidth',1)
 hold on
-plot(x_data(1,105),x_data(2,105),'O','MarkerSize',5,'MarkerEdgeColor','k',...
-    'MarkerFaceColor',[0.1294    0.6588    0.0588],'LineWidth',0.8)
+plot(x_data(1,52),x_data(2,52),'O','MarkerSize',5,'MarkerEdgeColor','black',...
+    'MarkerFaceColor','red','LineWidth',0.8)
 hold on
 plot(Td{40},[1 2], 'k-', 'LineWidth', 1)
-xlim([-0.1 0.12])
-ylim([-0.15 0.12])
+xlim([-0.05 0.16])
+ylim([-0.12 0.09])
 xlabel('$\tilde{x}_1$','interpreter','latex','FontSize',24)
 ylabel('$\tilde{x}_2$','interpreter','latex','FontSize',24)
 legend([handle_tracking,handle_attack_tracking,handle_em_control,handle_tracking_after],...
@@ -292,7 +333,7 @@ box on
 
 
 ax=axes;
-set(ax,'units','normalized','position',[0.15,0.15,0.3,0.3])
+set(ax,'units','normalized','position',[0.1,0.1,0.25,0.25])
 box(ax,'on')
 hold on
 
@@ -301,118 +342,373 @@ for i=40:40
     hold on
 end
 hold on
-handle_tracking = plot(x_data(1,1:27),x_data(2,1:27),'b-','LineWidth',1.5)
+handle_tracking = plot(x_data(1,1:40),x_data(2,1:40),'b-','LineWidth',1.5)
 hold on
-handle_attack_tracking = plot(x_data(1,94:105),x_data(2,94:105),'r-','LineWidth',1.5)
+handle_attack_tracking = plot(x_data(1,40:52),x_data(2,40:52),'r-','LineWidth',1.5)
 hold on
-handle_em_control = plot(x_data(1,105:116),x_data(2,105:116),'color'...
-    ,[0.1294    0.6588    0.0588],'LineWidth',...
-    2,'LineStyle','-')
+handle_em_control = plot(x_data(1,52:62),x_data(2,52:62),'color'...
+    ,[0.1294    0.6588    0.0588],'LineWidth',2.5,'LineStyle','-')
 hold on
-handle_tracking_after = plot(x_data(1,116:180),x_data(2,116:180),'m-','LineWidth',1.5)
+handle_tracking_after = plot(x_data(1,62:80),x_data(2,62:80),'m-','LineWidth',1)
 hold on
+handle_ref = plot(x_data(1,52),x_data(2,52),'O','MarkerSize',5,'MarkerEdgeColor','k',...
+    'MarkerFaceColor','r','LineWidth',0.8)
 
-handle_initial_state = plot(x_data(1,1),x_data(2,1),'O','MarkerSize',5,'MarkerEdgeColor','k',...
-    'MarkerFaceColor','r','LineWidth',0.8)
 hold on
-handle_ref = plot(ref(1,95),ref(2,95),'O','MarkerSize',5,'MarkerEdgeColor','r',...
-    'MarkerFaceColor','r','LineWidth',0.8)
+% plot(x_plus_data{51},[1 2],'b--','LineWidth',1)
+% hold on
+plot(x_plus_data{52},[1 2],'r--','LineWidth',1)
 hold on
-handle_ref1 = plot(ref(1,50),ref(2,50),'O','MarkerSize',5,'MarkerEdgeColor','k',...
-    'MarkerFaceColor','r','LineWidth',1)
+plot(x_plus_data{51},[1 2],'Color',[0.1294    0.6588    0.0588],'LineWidth',1,'LineStyle','--')
 hold on
-plot(x_data(1,105),x_data(2,105),'O','MarkerSize',5,'MarkerEdgeColor','k',...
-    'MarkerFaceColor',[0.1294    0.6588    0.0588],'LineWidth',0.8)
-hold on
-plot(x_plus_data{104},[1 2],'b--','LineWidth',1)
-hold on
-plot(x_plus_data{105},[1 2],'r--','LineWidth',1)
-hold on
-plot(x_plus_data{106},[1 2],'Color',[0.1294    0.6588    0.0588],'LineWidth',1,'LineStyle','--')
-hold on
-annotation('textarrow',[0.276819923371647 0.307471264367816],...
-    [0.288414414414414 0.32545045045045],'String','$\hat{\mathcal{S}}^{+}_{103}$','FontSize',...
+annotation('textarrow',[0.241379310344827 0.281609195402298],...
+    [0.203828828828828 0.221846846846846],'String','$\hat{\mathcal{S}}^{+}_{51}$','FontSize',...
     14,'interpreter','latex');
 hold on
-annotation('textarrow',[0.418582375478927 0.404214559386971],...
-    [0.287162162162162 0.332207207207207],'String','$\hat{\mathcal{S}}^{+}_{104}$','FontSize',...
+annotation('textarrow',[0.326628352490421 0.328544061302682],...
+    [0.158783783783784 0.190315315315315],'String','$\hat{\mathcal{S}}^{+}_{52}$','FontSize',...
     14,'interpreter','latex');
 hold on
-annotation('textarrow',[0.231800766283524 0.266283524904214],...
-    [0.316441441441441 0.336711711711711],'String','$\hat{\mathcal{S}}^{+}_{105}$','FontSize',...
-    14,'interpreter','latex');
-hold on
-annotation('textarrow',[0.401580459770114 0.389846743295019],...
-    [0.39724099099099 0.372747747747748],'String','$\hat{\mathcal{T}}^{40}_e$',...
+annotation('textarrow',[0.326867816091953 0.315134099616858],...
+    [0.313907657657655 0.289414414414414],'String','$\hat{\mathcal{T}}^{40}_e$',...
     'Interpreter','latex',...
     'FontSize',14);
 hold on
-annotation('textbox',...
-    [0.228250957854406 0.405405405405405 0.173329501915709 0.0360360360360361],...
-    'String','Safety Verification',...
-    'FitBoxToText','off',...
-    'EdgeColor',[1 1 1]);
-hold on
-annotation('line',[0.450191570881226 0.813218390804598],...
-    [0.447198198198198 0.800675675675676],...
-    'Color',[0.411764705882353 0.411764705882353 0.411764705882353],...
-    'LineStyle','--');
-hold on
-annotation('line',[0.448275862068965 0.814176245210728],...
-    [0.150900900900901 0.632882882882883],...
-    'Color',[0.411764705882353 0.411764705882353 0.411764705882353],...
-    'LineStyle','--');
-hold on
-annotation('rectangle',...
-    [0.811302681992337 0.628378378378378 0.154214559386973 0.173423423423424],...
-    'LineStyle','--');
 
-xlim([0.08 0.11])
-ylim([-0.01 0.08])
+hold on 
+text(0,0.0,'Safety Verification','FontSize',11,'Position',[0.112 -0.095 0])
+xticks([])
+yticks([])
+xlim([0.1 0.16])
+ylim([-0.1 -0.02])
 box on
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Box 2 %%%%%%%%%%%%%%%%%%%%%%
+ax=axes;
+set(ax,'units','normalized','position',[0.745,0.75,0.23,0.23])
+box(ax,'on')
+xticks([])
+yticks([])
+xlim([0.06 0.16])
+ylim([-0.12 -0.02])
+
+hold on
+
+handle_tracking = plot(x_data(1,100:125),x_data(2,100:125),'b-','LineWidth',1.5)
+hold on 
+handle_em_control = plot(x_data(1,145:151),x_data(2,145:151),'color'...
+    ,[0.1294    0.6588    0.0588],'LineWidth',2.5,'LineStyle','-')
+hold on 
+handle_attack_tracking = plot(x_data(1,151:155),x_data(2,151:155),'r-','LineWidth',1.5)
+hold on 
+plot(x_data(1,155),x_data(2,155),'O','MarkerSize',5,'MarkerEdgeColor','k',...
+    'MarkerFaceColor','r','LineWidth',0.8)
+hold on 
+handle_tracking_after = plot(x_data(1,155:160),x_data(2,155:160),'m--','LineWidth',1)
+hold on 
+plot(x_plus_data{145},[1 2],'r--','LineWidth',1)
+hold on
+plot(x_plus_data{146},[1 2],'Color',[0.1294    0.6588    0.0588],'LineWidth',1,'LineStyle','--')
+
+hold on 
+for i=40:40
+    plot(Td{i},[1 2],'color','black','LineStyle','-','LineWidth',0.1)
+    hold on
+end
+
+hold on
+annotation('textarrow',[0.817049808429119 0.832375478927203],...
+    [0.890765765765765 0.832207207207207],'String','$\hat{\mathcal{S}}^{+}_{144}$','FontSize',...
+    14,'interpreter','latex');
+hold on
+annotation('textarrow',[0.89176245210728 0.870689655172413],...
+    [0.865990990990991 0.820945945945946],'String','$\hat{\mathcal{S}}^{+}_{145}$','FontSize',...
+    14,'interpreter','latex');
+hold on 
+text(0,0.0,'Safety Verification','FontSize',11,'Position',[0.085 -0.026 0])
 print -depsc -tiff -r300 -painters case_A_state_trajectory.eps
 %% Visualization of the alarm signal & safety check signal and emergency signal  
+% close all
+
+alarm = alarm_data(1:201);
+active = emergency(1:201);
+safety = safety_data(1:201);
 
 k = 1:201;
 f = figure;
-f.OuterPosition = [400 400 550 250]
+f.OuterPosition = [400 400 600 300]
 ax = axes;
-ax.OuterPosition = [-0.04     -0.03     1.08     1.1]
+ax.OuterPosition = [-0.03  -0.03  1.06   1.1];
 %%%%%%%%%%%%%%%%%%%%
-x = [95 113 113 95];
+x = [40 60 60 40];
 y = [-0.9 -0.9 1.1 1.1];
 handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
 %
 hold on
+x = [145 154 154 145];
+y = [-0.9 -0.9 1.1 1.1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
 colororder({'k','k'})
 yyaxis left
 xlim([0 200])
-handle_alarm = plot(k(80:150),alarm(80:150),'r-','LineWidth',2);
+handle_alarm = plot(k(30:160),alarm(30:160),'r-','LineWidth',1.5);
 ylim([-0.1 1.1])
-xlim([0 200])
+xlim([30 160])
 names = {'Normal'; 'Anomaly'};
 set(gca,'ytick',[0:1],'yticklabel',names)
-xticks([])
+% xticks([])
 hold on
 yyaxis right
-handle_emergency = plot(k(80:150),active(80:150),'b--','LineWidth',2);
+handle_emergency = plot(k(30:160),active(30:160),'b--','LineWidth',1.5);
 hold on
-handle_safety = plot(k(80:150),safety(80:150),'m--','LineWidth',1);
+handle_safety = plot(k(30:160),safety(30:160),'m--','LineWidth',1);
 ylim([-0.1 1.1])
 names = {'False'; 'True'};
 set(gca,'ytick',[0:1],'yticklabel',names)
 xlabel('$k$','interpreter','latex','FontSize',15)
 
-xticks([80 90 96 104 115 120 130 140 150])
+xticks([0 20 40 52 60 80 100 120 145 155 180 200])
 legend([handle_alarm,handle_emergency,handle_safety,handle_attack],...
     '$D_k$','emergency','$\hat{\mathcal{S}}^{+}_k\not \subseteq \mathcal{X}_{\eta} \lor u^{\prime}_k \notin \mathcal{U}$',...
     'attack',...
-    'interpreter','latex','Location','NorthEast',...
+    'interpreter','latex','Position',[0.4 0.6 0.28 0.33],...
     'FontSize',11)
-xlim([80 150])
 box on
 
-print -depsc -tiff -r400 -painters case_A_alarm_safety_revised.eps
+print -depsc -tiff -r400 -painters case_A_alarm_safety.eps
+%% Visualization of the control signals 
+
+% close all
+f2 = figure;
+f2.OuterPosition = [400 100 600 700]
+
+f21 = subplot(3,1,1);
+
+x = [40 60 60 40];
+y = [-1 -1 1 1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+x = [145 154 154 145];
+y = [-1 -1 1 1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+handle_u = plot(u_ver(1,:),'b-','LineWidth',1);
+hold on 
+handle_c = yline(0.6111,'r--','LineWidth',2);
+hold on 
+handle_c = yline(-0.7778,'r--','LineWidth',2);
+ylim([-0.8,0.65]);
+yticks([-0.7778,0,0.6111])
+xticks([])
+xlim([0 200])
+ylabel('$u_p$','interpreter','latex','FontSize',15);
+legend([handle_c,handle_attack],...
+    '$\mathcal{U}$','attack',...
+    'interpreter','latex','Location','NorthEast',...
+    'FontSize',11);
+box on
+
+
+%
+f22 = subplot(3,1,2)
+% ax2 = axes;
+% f22.OuterPosition = [-0.02     -0.03     1.1     1.05]
+x = [40 60 60 40];
+y = [-2 -2 1 1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+x = [145 154 154 145];
+y = [-2 -2 1 1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+hold on 
+plot(u_ver(2,:),'b-','LineWidth',1)
+hold on 
+handle_c = yline(0.75,'r--','LineWidth',2);
+hold on 
+handle_c = yline(-1.25,'r--','LineWidth',2);
+ylim([-1.3,0.8])
+yticks([-1.25,0,0.75])
+xticks([])
+xlim([0 200])
+ylabel('$u_l$','interpreter','latex','FontSize',15);
+legend([handle_c,handle_attack],...
+    '$\mathcal{U}$','attack',...
+    'interpreter','latex','Location','NorthEast',...
+    'FontSize',11);
+box on
+
+f23 = subplot(3,1,3)
+% ax3 = axes;
+% f23.OuterPosition = [-0.02     -0.03     1.1     1.05]
+x = [40 60 60 40];
+y = [-2 -2 1 1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+x = [145 154 154 145];
+y = [-2 -2 1 1];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+plot(u_ver(3,:),'b-','LineWidth',1)
+hold on 
+handle_c = yline(0.5235,'r--','LineWidth',2);
+hold on 
+handle_c = yline(-1.4765,'r--','LineWidth',2);
+xlim([0 200])
+ylim([-1.5,0.6])
+yticks([-1.4765,0,0.5235])
+
+xlabel('$k$','interpreter','latex','FontSize',15);
+ylabel('$u_u$','interpreter','latex','FontSize',15);
+legend([handle_c,handle_attack],...
+    '$\mathcal{U}$','attack',...
+    'interpreter','latex','Location','NorthEast',...
+    'FontSize',11);
+box on
+print -depsc -tiff -r300 -painters case_A_control.eps
+
+%% Comparison: system with the safety modules vs system with the safety modules 
+
+% close all
+f = figure;
+f.OuterPosition = [400 100 1000 600];
+
+f1 = subplot(2,2,1);
+f1.OuterPosition = [0,0.5,0.47,0.45];
+x = [40 60 60 40];
+y = [-0.1 -0.1 0.5 0.5];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+x = [145 154 154 145];
+y = [-0.15 -0.15 0.5 0.5];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+handle_x = plot(x_data(1,:),'Color','blue','LineWidth',2.5,'LineStyle',':')
+
+hold on 
+handle_ref = plot(ref(1,:),'r--','LineWidth',2) 
+hold on 
+handle_x_w = plot(1:200,x_w(1,1:200),'m:','LineWidth',1.7);
+
+xlim([0 200]);
+ylim([0 0.26]);
+xticks([])
+ylabel('$ x_1$','interpreter','latex','FontSize',15);
+box on
+
+
+f2 = subplot(2,2,3);
+f2.OuterPosition = [0,0.02,0.47,0.5];
+x = [40 60 60 40];
+y = [-0.15 -0.15 0.5 0.5];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+box on
+x = [145 154 154 145];
+y = [-0.15 -0.15 0.5 0.5];
+handle_attack = patch(x,y,'red','FaceAlpha',0.2,'EdgeColor','none');
+hold on 
+handle_x = plot(x_data(2,:),'Color','blue','LineWidth',2.5,'LineStyle',':')
+
+hold on 
+handle_ref = plot(ref(2,:),'r--','LineWidth',2)
+hold on 
+handle_x_w = plot(1:200,x_w(2,1:200),'m:','LineWidth',1.7);
+hold on 
+xlim([0 200]);
+ylim([-0.13 0.05]);
+xticks([0 20 40 60 80 100 120 140 160 180 200])
+xlabel('$k$','interpreter','latex','FontSize',15);
+ylabel('$ x_2$','interpreter','latex','FontSize',15);
+
+legend([handle_x,handle_x_w,handle_ref,handle_attack],...
+    'With Safety Moduels','Without Safety Moduels','Reference','Attack period',...
+    'FontSize',9,'Position',[0.275906382204392 0.357630918490216 0.180803574505565 0.136167714588321]);
+
+
+f3 = subplot(2,2,[2 4]);
+f3.OuterPosition = [0.47,0,0.55,1];
+plot(Td{1}.mptPolytope.P,'Alpha',0.7,...
+    'color','green','LineWidth',0.01)
+hold on
+for i=2:40
+    plot(Td{i},[1 2],'color',[0.5020    0.5020    0.5020],'LineStyle','-','LineWidth',0.1)
+    hold on
+end
+hold on 
+handle_proposed = plot(x_data(1,1:200),x_data(2,1:200),'b:','LineWidth',2)
+hold on 
+handle_tracking = plot(x_w(1,1:200),x_w(2,1:200),'m:','LineWidth',1.5)
+hold on
+plot(x_w(1,54),x_w(2,54),'ro','LineWidth',1)
+hold on
+text(x_w(1,55),x_w(2,55),'$ x_{55}$','FontSize',15,'interpreter','latex')
+hold on 
+plot(x_w(1,61),x_w(2,61),'ro','LineWidth',1)
+hold on
+text(0.185,-0.105,'$ x_{60}$','FontSize',15,'interpreter','latex')
+
+xlim([-0.1 0.25])
+ylim([-0.13 0.05])
+
+
+hold on
+text(0.001,-0.001,'$ x_0$','FontSize',17,'interpreter','latex')
+hold on 
+for i=40:40
+    plot(Td{i},[1 2],'color','black','LineStyle','-','LineWidth',0.1)
+    hold on
+end
+
+hold on
+text(0.08,-0.105,'$r_{100}$','FontSize',15,'interpreter','latex')
+hold on
+text(0.1,0.037,'$r_1$','FontSize',15,'interpreter','latex')
+
+hold on
+handle_ref1 = plot(ref(1,1),ref(2,1),'pentagram','MarkerSize',9,'MarkerEdgeColor','k',...
+    'MarkerFaceColor','b','LineWidth',0.8)
+hold on
+handle_ref2 = plot(ref(1,120),ref(2,120),'pentagram','MarkerSize',9,'MarkerEdgeColor','k',...
+    'MarkerFaceColor','b','LineWidth',1)
+hold on 
+plot(x_w(1,146),x_w(2,146),'ro','LineWidth',1)
+hold on 
+plot(x_w(1,155),x_w(2,155),'ro','LineWidth',1)
+hold on 
+text(0.23,-0.115,'$ x_{155}$','FontSize',15,'interpreter','latex')
+hold on 
+plot(x_data(1,62),x_data(2,62),'ro','LineWidth',1)
+hold on 
+text(0.115,-0.11,'$ x_{147}$','FontSize',15,'interpreter','latex')
+hold on 
+text(0.055,-0.036,'$ x_{62}$','FontSize',15,'interpreter','latex')
+hold on 
+plot(x_data(1,151),x_data(2,151),'ro','LineWidth',1)
+hold on 
+text(0.03,-0.057,'$ x_{151}$','FontSize',15,'interpreter','latex')
+
+for i=40:40
+    plot(Td{i},[1 2],'color','black','LineStyle','-','LineWidth',0.1)
+    hold on
+end
+
+text(0.125,0.02,'$\hat\mathcal{T}^{40}_e$','FontSize',15,'interpreter','latex')
+
+xlabel('${x}_1$','interpreter','latex','FontSize',15)
+ylabel('${x}_2$','interpreter','latex','FontSize',15)
+
+legend([handle_proposed,handle_tracking],'With Safety Moduels','Without Safety Moduels',...
+    'Location','NorthWest','FontSize',10);
+
+
+
+print -depsc -tiff -r400 -painters case_A_comparison.eps
+%% Saving variables 
+
+save x_data
+save x_w
+save u_ver 
 
 %------------- END OF CODE --------------

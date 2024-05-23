@@ -52,8 +52,11 @@ x_w: contains the system's trajectory without the safety modules
 ### Attack on the actuation channel: 
 ![State Evolution](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_state_trajectory.jpg)
 ![Alarm, emergency and Safety Signals](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_alarm_safety.jpg)
-
+![Alarm, emergency and Safety Signals](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_comparison.jpg)
+![Alarm, emergency and Safety Signals](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_A_control.jpg)
 ### Attack on the measurement channel: 
 ![](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_B_state_trajectory.jpg)
 ![](https://github.com/attarmehran/Data-Driven-Safety-Preserving-Control-Architecture-for-Constrained-CPS/blob/main/Figures/case_B_alarm_safety.jpg)
+
+
 ###

@@ -1,9 +1,9 @@
 % Author:       Mehran Attar
-% Written:      10-December-2023
-% Last update:  --------------
-% Last revision: 10-December-2023
-% This codes simulates the proposed data-driven safety preserving control
-% architecture in the presence of cyber attacks on the measurement channel.
+% Written:      12-Jan-2024
+% Last update:  23-May-2024
+% Last revision: 23-May-2024
+% This codes simulates a data-driven safety preserving control
+% architecture in the presence of cyber attacks on the actuation channel.
 
 %------------- BEGIN CODE --------------
 
@@ -26,7 +26,7 @@ K = load('K.mat').K;
 Td_aug = load('Td_aug.mat').Td_aug;
 
 
-sim_time = 150;
+sim_time = 200;
 A=[0.993 0.003;0.007 0.982];
 B=[0.008 -0.003 -0.003;0 0.003 0.003];
 C=eye(2);

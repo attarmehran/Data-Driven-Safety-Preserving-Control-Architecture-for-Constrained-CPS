@@ -1,10 +1,10 @@
 
 % Author:       Mehran Attar
-% Written:      10-December-2023
-% Last update:  --------------
-% Last revision: 10-December-2023
-% This codes simulates the proposed data-driven safety preserving control
-% architecture in the presence of cyber attacks on the actuation channel. 
+% Written:      12-Jan-2024
+% Last update:  23-May-2024
+% Last revision: 23-May-2024
+% This codes simulates a data-driven safety preserving control
+% architecture in the presence of cyber attacks on the actuation channel.
 
 %------------- BEGIN CODE --------------
 clc

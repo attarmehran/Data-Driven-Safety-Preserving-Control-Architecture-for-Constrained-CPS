@@ -36,7 +36,9 @@ Two scenarios have been considered in this work.
 
 ## Data
 x_data: system's trajectory with the safety modules 
+
 u_ver: the control signal applied to the plant
+
 x_w: system's trajectory without the safety modules
 
 ## Animated test 

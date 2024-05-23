@@ -35,11 +35,20 @@ Two scenarios have been considered in this work.
 - "detector_data_driven.m": simulates the data-driven anomaly detector local to the tracking controller, which is in charge of detecting anomalies caused by FDI attacks
 
 ## Data
-x_data: contains the system's trajectory with the safety modules 
+### Case A: 
+x_data_caseA: contains the system's trajectory with the safety modules 
 
-u_ver: contains the control signal applied to the plant
+u_ver_caseA: contains the control signal applied to the plant
 
-x_w: contains the system's trajectory without the safety modules
+x_w_caseA: contains the system's trajectory without the safety modules
+
+### Case B: 
+x_data_caseB: contains the system's trajectory with the safety modules 
+
+u_ver_caseB: contains the control signal applied to the plant
+
+x_w_caseB: contains the system's trajectory without the safety modules
+
 
 ## Animated test 
 ### Scenario 1: Attack on the actuation channel 
